@@ -518,3 +518,49 @@ pub fn search_entries(
 
     Ok(filtered)
 }
+
+// ----------------------------------------------------------------------------
+// 14. search_entry_headers
+// - Searches lightweight entry headers by title and category without decryption.
+//
+// Args:
+//   - conn: An open rusqlite Connection reference.
+//   - query: Substring to match against title.
+//   - category: Optional category filter string slice.
+//
+// Return:
+//   - Result<Vec<VaultEntryHeader>, DbError>: Matching entry headers.
+// ----------------------------------------------------------------------------
+pub fn search_entry_headers(
+    conn: &Connection,
+    query: &str,
+    category: Option<&str>,
+) -> Result<Vec<VaultEntryHeader>, DbError> {
+    let query_trim = query.trim();
+    let mut stmt = conn.prepare(
+        "SELECT id, title, category, is_favorite, updated_at
+         FROM entries
+         WHERE (?1 IS NULL OR category = ?1)
+           AND (?2 = '' OR title LIKE '%' || ?2 || '%')
+         ORDER BY is_favorite DESC, updated_at DESC",
+    )?;
+
+    let rows = stmt.query_map(params![category, query_trim], |row| {
+        let is_fav: i64 = row.get(3)?;
+        Ok(VaultEntryHeader {
+            id: row.get(0)?,
+            title: row.get(1)?,
+            category: row.get(2)?,
+            is_favorite: is_fav == 1,
+            updated_at: row.get(4)?,
+        })
+    })?;
+
+    let mut headers = Vec::new();
+    for row in rows {
+        headers.push(row?);
+    }
+
+    Ok(headers)
+}
+

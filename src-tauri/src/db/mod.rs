@@ -12,7 +12,7 @@ pub use error::DbError;
 pub use operations::{
     create_entry, delete_entry, get_entry_by_id, get_vault_kdf_params, get_vault_salt,
     initialize_vault, is_vault_initialized, list_entries, list_entry_headers, search_entries,
-    toggle_favorite, update_entry, verify_master_key,
+    search_entry_headers, toggle_favorite, update_entry, verify_master_key,
 };
 pub use schema::{init_schema, SCHEMA_VERSION, VERIFIER_TOKEN_V1};
 
@@ -449,4 +449,63 @@ mod tests {
         assert!(!headers[1].is_favorite);
         assert_eq!(headers[1].updated_at, 1000);
     }
+
+    #[test]
+    fn test_search_entry_headers_fast_sql() {
+        let conn = setup_test_db();
+        let master_key = [0x77u8; 32];
+
+        let entry1 = VaultEntry {
+            id: "fast-1".to_string(),
+            title: "GitHub Personal".to_string(),
+            category: "login".to_string(),
+            is_favorite: true,
+            fields: vec![],
+            notes: None,
+            created_at: 1000,
+            updated_at: 2000,
+        };
+
+        let entry2 = VaultEntry {
+            id: "fast-2".to_string(),
+            title: "GitLab Work".to_string(),
+            category: "login".to_string(),
+            is_favorite: false,
+            fields: vec![],
+            notes: None,
+            created_at: 1000,
+            updated_at: 1500,
+        };
+
+        let entry3 = VaultEntry {
+            id: "fast-3".to_string(),
+            title: "Bank Card Visa".to_string(),
+            category: "card".to_string(),
+            is_favorite: false,
+            fields: vec![],
+            notes: None,
+            created_at: 1000,
+            updated_at: 1000,
+        };
+
+        create_entry(&conn, &master_key, &entry1).unwrap();
+        create_entry(&conn, &master_key, &entry2).unwrap();
+        create_entry(&conn, &master_key, &entry3).unwrap();
+
+        // 1. Search for "Git" across all categories -> matches fast-1 and fast-2
+        let res1 = search_entry_headers(&conn, "Git", None).unwrap();
+        assert_eq!(res1.len(), 2);
+        assert_eq!(res1[0].id, "fast-1"); // Favorite first
+        assert_eq!(res1[1].id, "fast-2");
+
+        // 2. Search for "Git" filtered by category "card" -> 0 matches
+        let res2 = search_entry_headers(&conn, "Git", Some("card")).unwrap();
+        assert_eq!(res2.len(), 0);
+
+        // 3. Search empty query filtered by category "card" -> matches fast-3
+        let res3 = search_entry_headers(&conn, "", Some("card")).unwrap();
+        assert_eq!(res3.len(), 1);
+        assert_eq!(res3[0].id, "fast-3");
+    }
 }
+
