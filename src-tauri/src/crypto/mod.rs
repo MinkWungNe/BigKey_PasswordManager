@@ -28,7 +28,10 @@ pub enum CryptoError {
 }
 
 pub use cipher::{decrypt, encrypt, CIPHER_VERSION_V1, MIN_PAYLOAD_LENGTH, NONCE_LENGTH};
-pub use kdf::{derive_key, generate_salt, ARGON2_ITERATIONS, ARGON2_MEMORY_KIB, ARGON2_PARALLELISM, KEY_LENGTH};
+pub use kdf::{
+    derive_key, derive_key_with_params, generate_salt, KdfParams, 
+    ARGON2_ITERATIONS, ARGON2_MEMORY_KIB, ARGON2_PARALLELISM, KEY_LENGTH,
+};
 
 #[cfg(test)]
 mod tests {
