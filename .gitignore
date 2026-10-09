@@ -1,0 +1,79 @@
+# ==========================================
+# Rust & Cargo Build Artifacts
+# ==========================================
+/src-tauri/target/
+Cargo.lock.bak
+**/*.rs.bk
+
+# ==========================================
+# Node.js & Frontend Artifacts
+# ==========================================
+node_modules/
+dist/
+dist-ssr/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ==========================================
+# Tauri v2 & Mobile Generated Files
+# ==========================================
+/src-tauri/gen/
+*.apk
+*.aab
+*.msi
+*.exe
+*.app
+*.dmg
+*.deb
+*.rpm
+
+# ==========================================
+# Vault, Database & Encryption Artifacts
+# (CỰC KỲ QUAN TRỌNG: TRÁNH RÒ RỈ DỮ LIỆU CÁ NHÂN KHI TEST)
+# ==========================================
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+*.sqlite
+*.sqlite3
+*.enc
+*.vault
+test_vault*
+*.bak
+
+# ==========================================
+# Security Keys, Keystores & Environment
+# ==========================================
+*.keystore
+*.jks
+*.key
+*.pem
+*.p12
+*.pfx
+.env
+.env.*
+!.env.example
+
+# ==========================================
+# IDEs & System Files
+# ==========================================
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.log
+
+# ==========================================
+# Private Project Design Notes & Checklists
+# ==========================================
+.Design_Notes/
+DESIGN_NOTES/
