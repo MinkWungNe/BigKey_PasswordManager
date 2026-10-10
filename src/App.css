@@ -1,15 +1,148 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant light (&:where(.light, .light *));
+
+@keyframes shake-error {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+.animate-shake {
+  animation: shake-error 0.35s ease-in-out;
+}
+
 :root {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   color-scheme: dark;
+  --bg-app: #09090b;
+  --text-app: #fafafa;
+  --panel-bg: rgba(18, 18, 22, 0.7);
+  --panel-border: rgba(255, 255, 255, 0.08);
+  --card-bg: rgba(26, 26, 32, 0.55);
+  --card-border: rgba(255, 255, 255, 0.06);
+}
+
+:root.light,
+html.light,
+.light {
+  color-scheme: light;
+  --bg-app: #f4f4f5;
+  --text-app: #09090b;
+  --panel-bg: rgba(255, 255, 255, 0.85);
+  --panel-border: rgba(0, 0, 0, 0.08);
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --card-border: rgba(0, 0, 0, 0.06);
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #0b0f19;
-  color: #f1f5f9;
   user-select: none;
   overflow: hidden;
+  background-color: var(--bg-app);
+  color: var(--text-app);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+html.light body,
+.light body {
+  background-color: #f4f4f5;
+  color: #09090b;
+}
+
+/* Fallback light overrides for native Tailwind v4 class-based theming */
+.light .light\:bg-zinc-100 { background-color: #f4f4f5 !important; }
+.light .light\:bg-zinc-100\/90 { background-color: rgba(244, 244, 245, 0.9) !important; }
+.light .light\:bg-zinc-100\/80 { background-color: rgba(244, 244, 245, 0.8) !important; }
+.light .light\:bg-zinc-100\/70 { background-color: rgba(244, 244, 245, 0.7) !important; }
+.light .light\:bg-zinc-200 { background-color: #e4e4e7 !important; }
+.light .light\:bg-zinc-200\/90 { background-color: rgba(228, 228, 231, 0.9) !important; }
+.light .light\:bg-zinc-200\/80 { background-color: rgba(228, 228, 231, 0.8) !important; }
+.light .light\:bg-zinc-200\/70 { background-color: rgba(228, 228, 231, 0.7) !important; }
+.light .light\:bg-zinc-200\/60 { background-color: rgba(228, 228, 231, 0.6) !important; }
+.light .light\:bg-zinc-200\/50 { background-color: rgba(228, 228, 231, 0.5) !important; }
+.light .light\:bg-zinc-200\/40 { background-color: rgba(228, 228, 231, 0.4) !important; }
+.light .light\:bg-zinc-50\/70 { background-color: rgba(250, 250, 250, 0.7) !important; }
+.light .light\:bg-white { background-color: #ffffff !important; }
+.light .light\:bg-white\/95 { background-color: rgba(255, 255, 255, 0.95) !important; }
+.light .light\:bg-white\/90 { background-color: rgba(255, 255, 255, 0.9) !important; }
+.light .light\:bg-white\/70 { background-color: rgba(255, 255, 255, 0.7) !important; }
+.light .light\:bg-zinc-900 { background-color: #18181b !important; }
+.light .light\:bg-zinc-950 { background-color: #09090b !important; }
+
+/* Light hover overrides */
+.light .light\:hover\:bg-zinc-100\/60:hover { background-color: rgba(244, 244, 245, 0.6) !important; }
+.light .light\:hover\:bg-zinc-200:hover { background-color: #e4e4e7 !important; }
+.light .light\:hover\:bg-zinc-200\/80:hover { background-color: rgba(228, 228, 231, 0.8) !important; }
+.light .light\:hover\:bg-white\/80:hover { background-color: rgba(255, 255, 255, 0.8) !important; }
+.light .light\:hover\:bg-white:hover { background-color: #ffffff !important; }
+.light .light\:hover\:border-zinc-300\/60:hover { border-color: rgba(212, 212, 216, 0.6) !important; }
+.light .light\:hover\:text-zinc-900:hover { color: #18181b !important; }
+.light .light\:hover\:text-zinc-950:hover { color: #09090b !important; }
+
+.light .light\:text-zinc-950 { color: #09090b !important; }
+.light .light\:text-zinc-900 { color: #18181b !important; }
+.light .light\:text-zinc-800 { color: #27272a !important; }
+.light .light\:text-zinc-700 { color: #3f3f46 !important; }
+.light .light\:text-zinc-600 { color: #52525b !important; }
+.light .light\:text-zinc-500 { color: #71717a !important; }
+.light .light\:text-zinc-400 { color: #a1a1aa !important; }
+.light .light\:text-white { color: #ffffff !important; }
+
+.light .light\:border-zinc-200 { border-color: #e4e4e7 !important; }
+.light .light\:border-zinc-200\/80 { border-color: rgba(228, 228, 231, 0.8) !important; }
+.light .light\:border-zinc-200\/90 { border-color: rgba(228, 228, 231, 0.9) !important; }
+.light .light\:border-zinc-300 { border-color: #d4d4d8 !important; }
+.light .light\:border-zinc-300\/80 { border-color: rgba(212, 212, 216, 0.8) !important; }
+.light .light\:border-zinc-400 { border-color: #a1a1aa !important; }
+.light .light\:border-zinc-900 { border-color: #18181b !important; }
+
+/* Glassmorphism Surface Helpers */
+.glass-panel-dark {
+  background-color: rgba(18, 18, 22, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-light {
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.glass-card-dark {
+  background-color: rgba(26, 26, 32, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.glass-card-light {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(161, 161, 170, 0.2);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(161, 161, 170, 0.4);
 }

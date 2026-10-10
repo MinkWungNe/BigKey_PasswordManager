@@ -1,6 +1,7 @@
 // ============================================================================
 // File: Modal.tsx
-// Description: Accessible modal dialog overlay with backdrop blur and escape key handling.
+// Description: Accessible modal dialog overlay with glassmorphism backdrop blur
+//              and refined monochromatic dark/light styling.
 // ============================================================================
 
 import React, { useEffect } from "react";
@@ -16,7 +17,7 @@ export interface ModalProps {
 
 // ----------------------------------------------------------------------------
 // 1. Modal
-// - Renders accessible modal dialog overlay on top of active viewport.
+// - Accessible modal dialog overlay with glass surface elevation.
 //
 // Args:
 //   - isOpen: Boolean visibility trigger.
@@ -55,18 +56,23 @@ export const Modal: React.FC<ModalProps> = ({
   }[maxWidth];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in duration-200">
       <div
-        className={`w-full ${maxWidthClasses} bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] text-left`}
+        className={`w-full ${maxWidthClasses} bg-zinc-900/90 light:bg-white/95 border border-zinc-800 light:border-zinc-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] text-left transition-all duration-200 backdrop-blur-xl`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800/80 bg-zinc-900/60">
-          <h3 className="text-base font-semibold text-zinc-100">{title}</h3>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800/80 light:border-zinc-200/80 bg-zinc-900/50 light:bg-zinc-50/50">
+          <h3 className="text-sm font-semibold tracking-wide text-zinc-100 light:text-zinc-900">
+            {title}
+          </h3>
           <button
+            type="button"
             onClick={onClose}
-            className="p-1 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition-colors cursor-pointer"
+            aria-label="Close dialog"
+            title="Close dialog"
+            className="p-1.5 rounded-xl border border-transparent text-zinc-400 hover:text-zinc-100 dark:hover:text-zinc-100 light:text-zinc-500 light:hover:text-zinc-950 hover:bg-zinc-800/80 dark:hover:bg-zinc-800/80 light:hover:bg-white light:hover:border-zinc-300 light:hover:shadow-xs transition-all duration-150 cursor-pointer"
           >
-            <X size={18} />
+            <X size={16} />
           </button>
         </div>
         <div className="p-6 overflow-y-auto">{children}</div>

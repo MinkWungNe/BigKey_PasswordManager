@@ -1,7 +1,8 @@
 // ============================================================================
 // File: PasswordGeneratorModal.tsx
 // Description: Interactive CSPRNG password generator modal featuring length
-//              sliders, character set switches, entropy bits meter, and autofill hook.
+//              sliders, character set switches, entropy bits meter, and autofill hook
+//              with Neutral Monochromatic glassmorphism styling.
 // ============================================================================
 
 import React, { useEffect, useState } from "react";
@@ -81,27 +82,29 @@ export const PasswordGeneratorModal: React.FC<PasswordGeneratorModalProps> = ({
     <Modal isOpen={isOpen} onClose={onClose} title="Password Generator" maxWidth="md">
       <div className="flex flex-col gap-5 text-left">
         {/* Output Display Box */}
-        <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-4 flex flex-col gap-2">
+        <div className="bg-zinc-950/80 light:bg-zinc-100 border border-zinc-800 light:border-zinc-300 rounded-2xl p-4 flex flex-col gap-2">
           <div className="flex items-center justify-between gap-3">
-            <span className="font-mono text-base font-semibold text-white tracking-wider break-all select-all">
+            <span className="font-mono text-base font-semibold text-white light:text-zinc-950 tracking-wider break-all select-all">
               {password}
             </span>
-            <div className="flex items-center gap-1 shrink-0 select-none">
+            <div className="flex items-center gap-1.5 shrink-0 select-none">
               <button
                 type="button"
                 onClick={handleRegenerate}
-                className="p-2 rounded-xl text-zinc-400 hover:text-blue-400 hover:bg-zinc-800 transition-colors cursor-pointer"
+                aria-label="Regenerate password"
+                className="p-2 rounded-xl border border-transparent text-zinc-400 hover:text-zinc-100 dark:hover:text-zinc-100 light:text-zinc-500 light:hover:text-zinc-950 hover:bg-zinc-800/80 dark:hover:bg-zinc-800/80 light:hover:bg-white light:hover:border-zinc-300 light:hover:shadow-xs transition-all duration-150 cursor-pointer"
                 title="Regenerate password"
               >
-                <RefreshCw size={16} />
+                <RefreshCw size={15} />
               </button>
               <button
                 type="button"
                 onClick={handleCopyPassword}
-                className="p-2 rounded-xl text-zinc-400 hover:text-blue-400 hover:bg-zinc-800 transition-colors cursor-pointer"
+                aria-label="Copy password to clipboard"
+                className="p-2 rounded-xl border border-transparent text-zinc-400 hover:text-zinc-100 dark:hover:text-zinc-100 light:text-zinc-500 light:hover:text-zinc-950 hover:bg-zinc-800/80 dark:hover:bg-zinc-800/80 light:hover:bg-white light:hover:border-zinc-300 light:hover:shadow-xs transition-all duration-150 cursor-pointer"
                 title="Copy password"
               >
-                {copied ? <Check size={16} className="text-emerald-400" /> : <Copy size={16} />}
+                {copied ? <Check size={15} className="text-zinc-200 dark:text-zinc-200 light:text-zinc-900" /> : <Copy size={15} />}
               </button>
             </div>
           </div>
@@ -109,10 +112,10 @@ export const PasswordGeneratorModal: React.FC<PasswordGeneratorModalProps> = ({
           {/* Entropy Gauge */}
           <div className="flex flex-col gap-1.5 mt-1">
             <div className="flex justify-between text-[11px]">
-              <span className="text-zinc-400 font-medium">Strength: {strength.label}</span>
-              <span className="text-zinc-500">{strength.entropy} bits entropy</span>
+              <span className="text-zinc-400 light:text-zinc-600 font-medium">Strength: {strength.label}</span>
+              <span className="text-zinc-500 light:text-zinc-600 font-mono">{strength.entropy} bits entropy</span>
             </div>
-            <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden flex gap-1">
+            <div className="w-full h-1.5 bg-zinc-800 light:bg-zinc-200 rounded-full overflow-hidden flex gap-1">
               {[1, 2, 3, 4].map((tier) => (
                 <div
                   key={tier}
@@ -128,9 +131,9 @@ export const PasswordGeneratorModal: React.FC<PasswordGeneratorModalProps> = ({
         {/* Configuration Sliders & Toggles */}
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <div className="flex justify-between text-xs font-medium text-zinc-300">
+            <div className="flex justify-between text-xs font-medium text-zinc-300 light:text-zinc-700">
               <span>Length</span>
-              <span className="font-mono text-blue-400">{options.length} characters</span>
+              <span className="font-mono text-zinc-200 light:text-zinc-950 font-semibold">{options.length} characters</span>
             </div>
             <input
               type="range"
@@ -138,7 +141,7 @@ export const PasswordGeneratorModal: React.FC<PasswordGeneratorModalProps> = ({
               max="64"
               value={options.length}
               onChange={(e) => setOptions({ ...options, length: Number(e.target.value) })}
-              className="w-full h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-blue-500"
+              className="w-full h-1.5 bg-zinc-800 light:bg-zinc-300 rounded-lg appearance-none cursor-pointer accent-zinc-200 light:accent-zinc-800"
             />
           </div>
 
@@ -154,7 +157,7 @@ export const PasswordGeneratorModal: React.FC<PasswordGeneratorModalProps> = ({
               return (
                 <label
                   key={key}
-                  className="flex items-center gap-2.5 p-2.5 rounded-xl bg-zinc-950/60 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-300 cursor-pointer transition-colors"
+                  className="flex items-center gap-2.5 p-2.5 rounded-2xl bg-zinc-950/60 light:bg-white border border-zinc-800 light:border-zinc-300 hover:border-zinc-600 light:hover:border-zinc-400 text-xs text-zinc-300 light:text-zinc-700 cursor-pointer transition-colors"
                 >
                   <input
                     type="checkbox"
@@ -162,7 +165,7 @@ export const PasswordGeneratorModal: React.FC<PasswordGeneratorModalProps> = ({
                     onChange={(e) =>
                       setOptions({ ...options, [key]: e.target.checked })
                     }
-                    className="w-4 h-4 rounded text-blue-600 bg-zinc-900 border-zinc-700 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+                    className="w-4 h-4 rounded text-zinc-900 bg-zinc-900 border-zinc-700 focus:ring-0 cursor-pointer"
                   />
                   <span>{label}</span>
                 </label>
@@ -172,13 +175,13 @@ export const PasswordGeneratorModal: React.FC<PasswordGeneratorModalProps> = ({
         </div>
 
         {/* Modal Actions */}
-        <div className="flex justify-end gap-2.5 pt-2 border-t border-zinc-800/80">
+        <div className="flex justify-end gap-2.5 pt-2 border-t border-zinc-800/80 light:border-zinc-200/80">
           <Button variant="secondary" size="sm" onClick={onClose}>
             Close
           </Button>
           {onApply && (
             <Button variant="primary" size="sm" onClick={handleApplyPassword}>
-              <KeyRound size={15} />
+              <KeyRound size={14} />
               <span>Use This Password</span>
             </Button>
           )}

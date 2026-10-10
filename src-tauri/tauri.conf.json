@@ -12,13 +12,16 @@
   "app": {
     "windows": [
       {
-        "title": "BigKey - Zero-Knowledge Password Manager",
+        "label": "main",
+        "title": "BigKey",
         "width": 1080,
         "height": 720,
         "minWidth": 850,
         "minHeight": 550,
         "center": true,
-        "decorations": true
+        "decorations": false,
+        "resizable": true,
+        "shadow": true
       }
     ],
     "security": {

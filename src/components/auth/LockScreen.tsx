@@ -1,7 +1,7 @@
 // ============================================================================
 // File: LockScreen.tsx
 // Description: Vault unlock login screen verifying candidate Master Password
-//              with Zero-Retention form purging and immediate error clearing.
+//              with Zero-Retention form purging and Neutral Monochromatic styling.
 // ============================================================================
 
 import React, { useState } from "react";
@@ -29,16 +29,21 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onUnlock, isLoading }) =
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
+  const [isShaking, setIsShaking] = useState(false);
+
   // --------------------------------------------------------------------------
   // Handler: handleSubmit (Zero-Retention Security Enforced)
   // - Submits candidate password to IPC and cleans input field immediately.
   // --------------------------------------------------------------------------
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     setError(null);
+    setIsShaking(false);
 
     if (!password) {
       setError("Please enter your Master Password.");
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 500);
       return;
     }
 
@@ -49,46 +54,66 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onUnlock, isLoading }) =
     const success = await onUnlock(passwordToSubmit);
     if (!success) {
       setError("Incorrect Master Password. Please try again.");
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 500);
     }
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-zinc-950 text-zinc-100">
-      <div className="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl flex flex-col gap-6 text-left">
+    <div className="h-full w-full flex items-center justify-center p-4 bg-zinc-950 dark:bg-zinc-950 light:bg-zinc-100 text-zinc-100 dark:text-zinc-100 light:text-zinc-900 transition-colors duration-200">
+      <div className="w-full max-w-sm bg-zinc-900/80 dark:bg-zinc-900/80 light:bg-white border border-zinc-800 dark:border-zinc-800 light:border-zinc-200 rounded-3xl p-8 shadow-2xl flex flex-col gap-6 text-left backdrop-blur-xl">
         {/* Lock Icon Banner */}
         <div className="flex flex-col items-center text-center gap-3">
-          <div className="w-16 h-16 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center text-blue-400">
-            <Lock size={30} />
+          <div className="w-16 h-16 rounded-3xl bg-zinc-800 dark:bg-zinc-800 light:bg-zinc-100 border border-zinc-700 dark:border-zinc-700 light:border-zinc-300 flex items-center justify-center text-zinc-100 dark:text-zinc-100 light:text-zinc-900 shadow-sm">
+            <Lock size={28} />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white tracking-tight">Vault is Locked</h1>
-            <p className="text-xs text-zinc-400 mt-1">
-              Enter your Master Password to access your credentials
+            <h1 className="text-xl font-bold tracking-tight text-white dark:text-white light:text-zinc-950">
+              Vault is Locked
+            </h1>
+            <p className="text-xs text-zinc-400 dark:text-zinc-400 light:text-zinc-500 mt-1">
+              Enter your Master Password to access credentials
             </p>
           </div>
         </div>
 
         {/* Unlock Form */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col">
           <Input
             label="Master Password"
             isPassword
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (error) setError(null);
+            }}
             placeholder="••••••••••••"
             autoFocus
             disabled={isLoading}
           />
 
-          {error && (
-            <div className="text-xs text-rose-400 bg-rose-500/10 p-2.5 rounded-lg border border-rose-500/20">
-              {error}
-            </div>
-          )}
+          {/* Reserved Error Slot - Keeps Height Completely Stable */}
+          <div className="h-6 flex items-center justify-center text-center my-1 select-none">
+            {error && (
+              <span className="text-xs font-medium text-rose-400 animate-in fade-in duration-150">
+                {error}
+              </span>
+            )}
+          </div>
 
-          <Button type="submit" variant="primary" size="lg" isLoading={isLoading} className="mt-1">
-            <Unlock size={18} />
-            Unlock Vault
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            isLoading={isLoading}
+            className={`w-full transition-all duration-200 ${
+              isShaking
+                ? "animate-shake !bg-rose-600 !text-white !border-rose-500 shadow-rose-900/50"
+                : ""
+            }`}
+          >
+            <Unlock size={16} />
+            <span>Unlock Vault</span>
           </Button>
         </form>
       </div>

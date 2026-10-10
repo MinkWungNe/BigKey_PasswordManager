@@ -77,3 +77,15 @@ Thumbs.db
 # ==========================================
 .Design_Notes/
 DESIGN_NOTES/
+*design_notes*
+*Design_Notes*
+
+# ==========================================
+# AI Agent Workspaces, Skills & Knowledge Graphs
+# ==========================================
+.agents/
+.agent/
+.gemini/
+.claude/
+graphify-out/
+

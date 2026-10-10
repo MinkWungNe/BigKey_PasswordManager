@@ -113,6 +113,11 @@ export function useSecureClipboard(): SecureClipboardState {
           timerRef.current = window.setTimeout(() => {
             clearClipboardIfMatching();
           }, CLEAR_TIMEOUT_MS);
+          // Auto-hide the floating toast notification after 3.5 seconds
+          window.setTimeout(() => {
+            setCopiedFieldId(null);
+            setCopiedMessage(null);
+          }, 3500);
         } else {
           sensitiveTargetRef.current = null;
           timerRef.current = window.setTimeout(() => {

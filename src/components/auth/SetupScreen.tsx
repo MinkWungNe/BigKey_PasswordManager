@@ -1,7 +1,7 @@
 // ============================================================================
 // File: SetupScreen.tsx
 // Description: Onboarding setup view for initial Master Password generation
-//              with Zero-Retention form purging and Zero-Knowledge warnings.
+//              with Zero-Retention form purging and Neutral Monochromatic styling.
 // ============================================================================
 
 import React, { useState } from "react";
@@ -37,7 +37,7 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ onInitialize, isLoadin
   // Handler: handleSubmit (Zero-Retention Security Enforced)
   // - Validates requirements, dispatches IPC, and immediately clears local state.
   // --------------------------------------------------------------------------
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -64,24 +64,26 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ onInitialize, isLoadin
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-zinc-950 text-zinc-100">
-      <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl flex flex-col gap-6 text-left">
+    <div className="h-full w-full flex items-center justify-center p-4 bg-zinc-950 light:bg-zinc-100 text-zinc-100 light:text-zinc-900 transition-colors duration-200">
+      <div className="w-full max-w-md bg-zinc-900/80 light:bg-white border border-zinc-800 light:border-zinc-200 rounded-3xl p-8 shadow-2xl flex flex-col gap-6 text-left backdrop-blur-xl">
         {/* Brand Header */}
         <div className="flex flex-col items-center text-center gap-3">
-          <div className="w-16 h-16 rounded-2xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
-            <KeyRound size={32} />
+          <div className="w-16 h-16 rounded-3xl bg-zinc-800 light:bg-zinc-100 border border-zinc-700 light:border-zinc-300 flex items-center justify-center text-zinc-100 light:text-zinc-900 shadow-sm">
+            <KeyRound size={30} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Welcome to BigKey</h1>
-            <p className="text-xs text-zinc-400 mt-1">
-              One Key for All • Zero-Knowledge Local Password Vault
+            <h1 className="text-xl font-bold tracking-tight text-white light:text-zinc-950">
+              Create Master Password
+            </h1>
+            <p className="text-xs text-zinc-400 light:text-zinc-500 mt-1">
+              One Key for All • Zero-Knowledge Local Vault
             </p>
           </div>
         </div>
 
         {/* Zero-Knowledge Disclaimer */}
-        <div className="flex items-start gap-3 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs leading-relaxed">
-          <ShieldAlert size={18} className="shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-zinc-950/60 light:bg-zinc-100 border border-zinc-800 light:border-zinc-300 text-zinc-300 light:text-zinc-700 text-xs leading-relaxed">
+          <ShieldAlert size={17} className="shrink-0 mt-0.5 text-zinc-400 light:text-zinc-600" />
           <p>
             <strong>Important:</strong> BigKey never transmits or stores your Master Password on any
             remote server. If you lose this password, your vault cannot be recovered.
@@ -95,7 +97,7 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ onInitialize, isLoadin
             isPassword
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Choose a strong, memorable master password"
+            placeholder="Choose a strong master password"
             autoFocus
             disabled={isLoading}
           />
@@ -104,10 +106,10 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ onInitialize, isLoadin
           {password.length > 0 && (
             <div className="flex flex-col gap-1.5 -mt-1">
               <div className="flex justify-between text-xs">
-                <span className="text-zinc-400">Strength: {strength.label}</span>
-                <span className="text-zinc-500">{strength.entropy} bits entropy</span>
+                <span className="text-zinc-400 light:text-zinc-500">Strength: {strength.label}</span>
+                <span className="text-zinc-500 light:text-zinc-400 font-mono">{strength.entropy} bits entropy</span>
               </div>
-              <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden flex gap-1">
+              <div className="w-full h-1.5 bg-zinc-800 light:bg-zinc-200 rounded-full overflow-hidden flex gap-1">
                 {[1, 2, 3, 4].map((tier) => (
                   <div
                     key={tier}
@@ -129,11 +131,15 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ onInitialize, isLoadin
             disabled={isLoading}
           />
 
-          {error && <div className="text-xs text-rose-400 bg-rose-500/10 p-2.5 rounded-lg">{error}</div>}
+          {error && (
+            <div className="text-xs text-rose-400 bg-rose-500/10 p-2.5 rounded-xl border border-rose-500/20">
+              {error}
+            </div>
+          )}
 
           <Button type="submit" variant="primary" size="lg" isLoading={isLoading} className="mt-2">
-            <Sparkles size={18} />
-            Create Secure Vault
+            <Sparkles size={16} />
+            <span>Create Secure Vault</span>
           </Button>
         </form>
       </div>

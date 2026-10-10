@@ -18,6 +18,7 @@ import { VaultEntry, VaultEntryHeader } from "../types";
 
 export interface EntriesHookState {
   headers: VaultEntryHeader[];
+  counts: Record<string, number>;
   selectedEntry: VaultEntry | null;
   selectedId: string | null;
   selectedCategory: string;
@@ -47,6 +48,13 @@ export interface EntriesHookState {
 // ----------------------------------------------------------------------------
 export function useEntries(isUnlocked: boolean): EntriesHookState {
   const [headers, setHeaders] = useState<VaultEntryHeader[]>([]);
+  const [counts, setCounts] = useState<Record<string, number>>({
+    all: 0,
+    favorites: 0,
+    login: 0,
+    card: 0,
+    note: 0,
+  });
   const [selectedEntry, setSelectedEntry] = useState<VaultEntry | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -61,6 +69,7 @@ export function useEntries(isUnlocked: boolean): EntriesHookState {
   // --------------------------------------------------------------------------
   const clearCache = useCallback(() => {
     setHeaders([]);
+    setCounts({ all: 0, favorites: 0, login: 0, card: 0, note: 0 });
     setSelectedEntry(null);
     setSelectedId(null);
     setSearchQuery("");
@@ -79,6 +88,17 @@ export function useEntries(isUnlocked: boolean): EntriesHookState {
 
     setIsLoading(true);
     try {
+      // Step 1: Always retrieve all headers to compute category count badges
+      const allHeadersList = await listEntryHeaders();
+      setCounts({
+        all: allHeadersList.length,
+        favorites: allHeadersList.filter((item) => item.is_favorite).length,
+        login: allHeadersList.filter((item) => item.category === "login").length,
+        card: allHeadersList.filter((item) => item.category === "card").length,
+        note: allHeadersList.filter((item) => item.category === "note").length,
+      });
+
+      // Step 2: Apply category filter and search query for visible headers
       const catFilter = selectedCategory === "all" || selectedCategory === "favorites"
         ? undefined
         : selectedCategory;
@@ -87,10 +107,9 @@ export function useEntries(isUnlocked: boolean): EntriesHookState {
       if (searchQuery.trim().length > 0) {
         list = await searchEntryHeaders(searchQuery.trim(), catFilter);
       } else {
-        list = await listEntryHeaders();
-        if (catFilter) {
-          list = list.filter((item) => item.category === catFilter);
-        }
+        list = catFilter
+          ? allHeadersList.filter((item) => item.category === catFilter)
+          : [...allHeadersList];
       }
 
       if (selectedCategory === "favorites") {
@@ -193,15 +212,24 @@ export function useEntries(isUnlocked: boolean): EntriesHookState {
 
   // --------------------------------------------------------------------------
   // Handler: toggleEntryFavorite
-  // - Inverts favorite flag on record and updates cached headers.
+  // - Inverts favorite flag on record, updates cached headers, and re-sorts.
   // --------------------------------------------------------------------------
   const toggleEntryFavorite = useCallback(
     async (id: string) => {
       try {
         const newFav = await toggleFavorite(id);
-        setHeaders((prev) =>
-          prev.map((item) => (item.id === id ? { ...item, is_favorite: newFav } : item))
-        );
+        setHeaders((prev) => {
+          const updated = prev.map((item) =>
+            item.id === id ? { ...item, is_favorite: newFav } : item
+          );
+          // Auto sort: favorite items float to top, preserving updated_at order
+          return [...updated].sort((a, b) => {
+            if (a.is_favorite !== b.is_favorite) {
+              return a.is_favorite ? -1 : 1;
+            }
+            return b.updated_at - a.updated_at;
+          });
+        });
         if (selectedEntry?.id === id) {
           setSelectedEntry({ ...selectedEntry, is_favorite: newFav });
         }
@@ -214,6 +242,7 @@ export function useEntries(isUnlocked: boolean): EntriesHookState {
 
   return {
     headers,
+    counts,
     selectedEntry,
     selectedId,
     selectedCategory,

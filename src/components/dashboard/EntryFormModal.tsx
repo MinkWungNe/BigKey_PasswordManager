@@ -1,7 +1,8 @@
 // ============================================================================
 // File: EntryFormModal.tsx
 // Description: Interactive modal form creating or updating vault entries with
-//              custom field dynamic templates, generator integration, and validation.
+//              custom field dynamic templates, generator integration, and validation
+//              styled with Neutral Monochromatic glassmorphism.
 // ============================================================================
 
 import React, { useEffect, useState } from "react";
@@ -134,7 +135,7 @@ export const EntryFormModal: React.FC<EntryFormModalProps> = ({
     setFields((prev) => prev.filter((f) => f.id !== id));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (!title.trim()) {
       setError("Item Title is required.");
@@ -180,18 +181,20 @@ export const EntryFormModal: React.FC<EntryFormModalProps> = ({
               label="Item Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Google Account, Personal Visa"
+              placeholder="e.g. Google Account, Master Card"
               autoFocus
               required
             />
           </div>
 
           <div className="flex flex-col gap-1.5 w-full sm:w-44">
-            <label className="text-xs font-semibold text-zinc-300">Category</label>
+            <label className="text-xs font-medium text-zinc-400 light:text-zinc-600">
+              Category
+            </label>
             <select
               value={category}
               onChange={(e) => handleCategoryChange(e.target.value)}
-              className="bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-blue-500 cursor-pointer"
+              className="bg-zinc-900/80 light:bg-white border border-zinc-700 light:border-zinc-300 rounded-xl px-3 py-2 text-sm text-zinc-100 light:text-zinc-900 focus:outline-none focus:border-zinc-400 light:focus:border-zinc-800 cursor-pointer"
             >
               <option value="login">Login</option>
               <option value="card">Credit Card</option>
@@ -203,14 +206,14 @@ export const EntryFormModal: React.FC<EntryFormModalProps> = ({
 
         {/* Dynamic Fields Section */}
         <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between border-b border-zinc-800 pb-1">
-            <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+          <div className="flex items-center justify-between border-b border-zinc-800 light:border-zinc-200 pb-1">
+            <span className="text-[11px] font-semibold text-zinc-400 light:text-zinc-500 uppercase tracking-wider">
               Fields
             </span>
             <button
               type="button"
               onClick={handleAddField}
-              className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 cursor-pointer font-medium"
+              className="flex items-center gap-1 text-xs text-zinc-300 light:text-zinc-700 hover:text-white light:hover:text-zinc-950 cursor-pointer font-medium transition-colors"
             >
               <Plus size={14} />
               <span>Add Custom Field</span>
@@ -221,7 +224,7 @@ export const EntryFormModal: React.FC<EntryFormModalProps> = ({
             {fields.map((field) => (
               <div
                 key={field.id}
-                className="p-3 bg-zinc-950/60 border border-zinc-800/80 rounded-xl flex flex-col gap-2"
+                className="p-3.5 bg-zinc-950/60 light:bg-zinc-100/70 border border-zinc-800/80 light:border-zinc-300/80 rounded-2xl flex flex-col gap-2 shadow-2xs"
               >
                 <div className="flex items-center justify-between gap-2">
                   <input
@@ -229,7 +232,7 @@ export const EntryFormModal: React.FC<EntryFormModalProps> = ({
                     value={field.label}
                     onChange={(e) => handleLabelChange(field.id, e.target.value)}
                     placeholder="Field Label"
-                    className="bg-transparent text-xs font-semibold text-zinc-300 focus:outline-none focus:text-white"
+                    className="bg-transparent text-xs font-semibold text-zinc-300 light:text-zinc-700 focus:outline-none focus:text-white light:focus:text-zinc-950"
                   />
 
                   <div className="flex items-center gap-2">
@@ -238,7 +241,7 @@ export const EntryFormModal: React.FC<EntryFormModalProps> = ({
                       onChange={(e) =>
                         handleTypeChange(field.id, e.target.value as FieldType)
                       }
-                      className="bg-zinc-900 border border-zinc-700 rounded px-2 py-0.5 text-[11px] text-zinc-300 focus:outline-none cursor-pointer"
+                      className="bg-zinc-900 light:bg-white border border-zinc-700 light:border-zinc-300 rounded-lg px-2 py-0.5 text-[11px] text-zinc-300 light:text-zinc-700 focus:outline-none cursor-pointer"
                     >
                       <option value="text">Text</option>
                       <option value="concealed">Concealed (Password/PIN)</option>
@@ -249,7 +252,8 @@ export const EntryFormModal: React.FC<EntryFormModalProps> = ({
                       <button
                         type="button"
                         onClick={() => onOpenGeneratorForField(field.id)}
-                        className="p-1 rounded text-emerald-400 hover:bg-emerald-500/10 cursor-pointer"
+                        aria-label="Generate password for this field"
+                        className="p-1 rounded-md text-zinc-300 light:text-zinc-700 hover:text-white light:hover:text-zinc-950 hover:bg-zinc-800 light:hover:bg-white light:hover:shadow-xs transition-colors cursor-pointer"
                         title="Generate password for this field"
                       >
                         <Sparkles size={14} />
@@ -259,7 +263,8 @@ export const EntryFormModal: React.FC<EntryFormModalProps> = ({
                     <button
                       type="button"
                       onClick={() => handleRemoveField(field.id)}
-                      className="p-1 rounded text-zinc-500 hover:text-rose-400 cursor-pointer"
+                      aria-label="Remove field"
+                      className="p-1 rounded-md text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
                       title="Remove field"
                     >
                       <Trash2 size={14} />
@@ -281,20 +286,22 @@ export const EntryFormModal: React.FC<EntryFormModalProps> = ({
 
         {/* Notes Textarea */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold text-zinc-300">Secure Notes (Optional)</label>
+          <label className="text-xs font-medium text-zinc-400 light:text-zinc-600">
+            Secure Notes (Optional)
+          </label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
             placeholder="Add confidential notes or recovery instructions..."
-            className="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 font-sans"
+            className="w-full bg-zinc-900/60 light:bg-white border border-zinc-800 light:border-zinc-300 rounded-xl p-3 text-sm text-zinc-100 light:text-zinc-900 placeholder-zinc-500 light:placeholder-zinc-400 focus:outline-none focus:border-zinc-400 light:focus:border-zinc-800 font-sans"
           />
         </div>
 
-        {error && <div className="text-xs text-rose-400 bg-rose-500/10 p-2.5 rounded-lg">{error}</div>}
+        {error && <div className="text-xs text-rose-400 bg-rose-500/10 p-2.5 rounded-xl">{error}</div>}
 
         {/* Form Actions */}
-        <div className="flex justify-end gap-2.5 pt-2 border-t border-zinc-800">
+        <div className="flex justify-end gap-2.5 pt-2 border-t border-zinc-800 light:border-zinc-200">
           <Button type="button" variant="secondary" size="sm" onClick={onClose} disabled={isSaving}>
             Cancel
           </Button>
